@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './ProductList.css'
 import CartItem from './CartItem';
+import { addItem } from './CartSlice';
+import { useDispatch } from 'react-redux';
+
 function ProductList({ onHomeClick }) {
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
+    const [addedToCart, setAddedToCart] = useState({});
+    const Dispatch = useDispatch();
 
     const plantsArray = [
         {
@@ -252,6 +257,15 @@ function ProductList({ onHomeClick }) {
         e.preventDefault();
         setShowCart(false);
     };
+
+    const handleAddToCart = (e) => {
+        dispatch(addItem(e));
+
+        setAddToCart((prev) => ({
+            ...prev,
+            [e.name]: true
+        }));
+    }
     return (
         <div>
             <div className="navbar" style={styleObj}>
@@ -274,6 +288,25 @@ function ProductList({ onHomeClick }) {
             </div>
             {!showCart ? (
                 <div className="product-grid">
+                    {plantsArray.map((category) =>
+                        category.plants.map((plant, index) => (
+                            <div key={index} className="product-card">
+                                <img src={plant.image} alt={plant.name} className="product-image" />
+
+                                <h3>{plant.name}</h3>
+                                <p>{plant.description}</p>
+                                <p className="price">{plant.cost}</p>
+
+                                <button
+                                    className="add-btn"
+                                    disabled={addedToCart[plant.name]}
+                                    onClick={() => handleAddToCart(plant)}
+                                >
+                                    {addedToCart[plant.name] ? "Added to Cart" : "Add to Cart"}
+                                </button>
+                            </div>
+                        ))
+                    )}
 
 
                 </div>
